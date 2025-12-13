@@ -29,7 +29,25 @@ class Vector2 : protected Vector3 {
      * @param y
      **/
     Vector2& set(const tf2Scalar &v0, const tf2Scalar &v1);
+    Vector2 &operator+=(const Vector2 &v);
 
+    Vector2 &operator-=(const Vector2 &v);
+
+    Vector2 &operator*=(const tf2Scalar &s);
+
+    Vector2 &operator/=(const tf2Scalar &s);
+
+    Vector2 operator+(const Vector2 &v) const;
+
+    Vector2 operator-(const Vector2 &v) const;
+
+    Vector2 operator-() const;
+
+    Vector2 operator*(const tf2Scalar &s) const;
+
+    Vector2 operator/(const tf2Scalar &s) const;
+
+	  tf2Scalar dot(const Vector2& v) const;
     /**
      * access to the underlying data Point2D::m_floats
      * @return Point2D::m_floats[index]

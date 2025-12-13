@@ -18,6 +18,50 @@ Vector2& Vector2::set(const tf2Scalar &v0, const tf2Scalar &v1) {
     return *this;
 }
 
+Vector2 &Vector2::operator+=(const Vector2 &v) {
+    m_floats[0] += v.m_floats[0], m_floats[1] += v.m_floats[1];
+    return *this;
+}
+
+Vector2 &Vector2::operator-=(const Vector2 &v) {
+    m_floats[0] -= v.m_floats[0], m_floats[1] -= v.m_floats[1];
+    return *this;
+}
+Vector2 &Vector2::operator*=(const tf2Scalar &s) {
+    m_floats[0] *= s, m_floats[1] *= s;
+    return *this;
+}
+Vector2 &Vector2::operator/=(const tf2Scalar &s) {
+    tf2FullAssert(s != tf2Scalar(0.0));
+    m_floats[0] /= s, m_floats[1] /= s;
+    return *this;
+}
+
+Vector2 Vector2::operator+(const Vector2 &v) const {
+    return Vector2(m_floats[0] + v.m_floats[0], m_floats[1] + v.m_floats[1]);
+}
+
+Vector2 Vector2::operator-(const Vector2 &v) const {
+    return Vector2(m_floats[0] - v.m_floats[0], m_floats[1] - v.m_floats[1]);
+}
+
+Vector2 Vector2::operator-() const {
+    return Vector2(-m_floats[0], -m_floats[1]);
+}
+
+Vector2 Vector2::operator*(const tf2Scalar &s) const {
+    return Vector2(m_floats[0] * s, m_floats[1] * s);
+}
+
+Vector2 Vector2::operator/(const tf2Scalar &s) const {
+    tf2FullAssert(s != tf2Scalar(0.0));
+    return Vector2(m_floats[0] / s, m_floats[1] / s);
+}
+
+tf2Scalar Vector2::dot(const Vector2 &v) const {
+    return m_floats[0] * v.m_floats[0] + m_floats[1] * v.m_floats[1];
+}
+
 tf2Scalar &Vector2::operator[](int index) {
     if (index < 0 || index >= 2) {
         throw std::out_of_range("Index out of bounds in Vector2::operator[]");

@@ -1,6 +1,7 @@
 #include "tf2_geometry/vector4.hpp"
 #include <cmath>
-#include <stdexcept>
+#include <iomanip>
+#include <sstream>
 
 using namespace tf2;
 
@@ -10,6 +11,16 @@ Vector4::Vector4() : Base() {
 
 Vector4::Vector4(const tf2Scalar &v0, const tf2Scalar &v1, const tf2Scalar &v2, const tf2Scalar &v3) {
     m_floats[0] = v0, m_floats[1] = v1, m_floats[2] = v2, m_floats[3] = v3;
+}
+
+std::string Vector4::to_str(int with, int precision) const {
+    std::ostringstream ss;
+    ss << "[ ";
+    ss << std::setw(with) << std::setprecision(precision) << std::fixed << this->m_floats[0] << ", ";
+    ss << std::setw(with) << std::setprecision(precision) << std::fixed << this->m_floats[1] << ", "; 
+    ss << std::setw(with) << std::setprecision(precision) << std::fixed << this->m_floats[2] << ", ";
+    ss << std::setw(with) << std::setprecision(precision) << std::fixed << this->m_floats[3] << "]";
+    return ss.str();
 }
 
 tf2Scalar &Vector4::operator[](int index) {
@@ -87,9 +98,8 @@ tf2Scalar Vector4::dot(const Vector4 &v) const {
 }
 
 bool Vector4::operator==(const Vector4 &p) const {
-    const tf2Scalar epsilon = 1e-9;
-    return (std::fabs(m_floats[0] - p.m_floats[0]) < epsilon) && (std::fabs(m_floats[1] - p.m_floats[1]) < epsilon) &&
-           (std::fabs(m_floats[2] - p.m_floats[2]) < epsilon) && (std::fabs(m_floats[3] - p.m_floats[3]) < epsilon);
+    return (std::fabs(m_floats[0] - p.m_floats[0]) < TF2SIMD_EPSILON) && (std::fabs(m_floats[1] - p.m_floats[1]) < TF2SIMD_EPSILON) &&
+           (std::fabs(m_floats[2] - p.m_floats[2]) < TF2SIMD_EPSILON) && (std::fabs(m_floats[3] - p.m_floats[3]) < TF2SIMD_EPSILON);
 }
 
 bool Vector4::operator!=(const Vector4 &p) const {

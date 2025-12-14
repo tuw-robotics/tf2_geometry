@@ -24,14 +24,14 @@ tf2Scalar &Point2D::y() {
  * returns the distance to an other point
  * @return disance
  **/
-tf2Scalar Point2D::distanceTo(const Point2D &p0) const {
-    return distanceTo(p0.x(), p0.y());
+tf2Scalar Point2D::distance_to(const Point2D &p0) const {
+    return distance_to(p0.x(), p0.y());
 }
 /**
  * returns the distance to an other point
  * @return disance
  **/
-tf2Scalar Point2D::distanceTo(const tf2Scalar &x0, const tf2Scalar &y0) const {
+tf2Scalar Point2D::distance_to(const tf2Scalar &x0, const tf2Scalar &y0) const {
     return  Vector2(x0 - this->x(), y0 - this->y()).length();
 }
 

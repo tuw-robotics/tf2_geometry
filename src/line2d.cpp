@@ -1,5 +1,7 @@
 #include "tf2_geometry/line2d.hpp"
 #include <cmath>
+#include <iomanip>
+#include <sstream>
 
 using namespace tf2;
 
@@ -26,21 +28,30 @@ Line2D &Line2D::create(const Point2D &p0, const Point2D &p1, bool normalize) {
     return create(p0.x(), p0.y(), p1.x(), p1.y(), normalize);
 }
 
-tf2Scalar Line2D::distanceTo(const tf2Scalar &x, const tf2Scalar &y) const {
+std::string Line2D::to_str(int with, int precision) const {
+    std::ostringstream ss;
+    ss << "[ ";
+    ss << std::setw(with) << std::setprecision(precision) << std::fixed << this->m_floats[0] << ", ";
+    ss << std::setw(with) << std::setprecision(precision) << std::fixed << this->m_floats[1] << ", "; 
+    ss << std::setw(with) << std::setprecision(precision) << std::fixed << this->m_floats[2] << "]";
+    return ss.str();
+}
+
+tf2Scalar Line2D::distance_to(const tf2Scalar &x, const tf2Scalar &y) const {
     return this->a() * x + this->b() * y + this->c();
 }
 
-tf2Scalar Line2D::distanceTo(const Point2D &p) const {
-    return distanceTo(p.x(), p.y());
+tf2Scalar Line2D::distance_to(const Point2D &p) const {
+    return distance_to(p.x(), p.y());
 }
 
-Point2D Line2D::pointOnLine(const tf2Scalar &x, const tf2Scalar &y) const {
-    tf2Scalar d = distanceTo(x, y);
+Point2D Line2D::point_on_line(const tf2Scalar &x, const tf2Scalar &y) const {
+    tf2Scalar d = distance_to(x, y);
     return Point2D(x - d * a(), y - d * b());
 }
 
-Point2D Line2D::pointOnLine(const Point2D &p) const {
-    return pointOnLine(p.x(), p.y());
+Point2D Line2D::point_on_line(const Point2D &p) const {
+    return point_on_line(p.x(), p.y());
 }
 
 Point2D Line2D::intersection(const Line2D &l) const {

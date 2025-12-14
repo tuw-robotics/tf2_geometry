@@ -1,18 +1,26 @@
 #include "tf2_geometry/vector2.hpp"
 #include <cmath>
-#include <stdexcept> 
+#include <iomanip>
+#include <sstream>
 
 using namespace tf2;
 
 Vector2::Vector2() {
-    m_floats[0] = 0.0, m_floats[1] = 0.0, m_floats[2] = 0.0, m_floats[3] = 0.0;  
+    m_floats[0] = 0.0, m_floats[1] = 0.0, m_floats[2] = 0.0, m_floats[3] = 0.0;
 }
 
-Vector2::Vector2(const tf2Scalar &v0, const tf2Scalar &v1)  {
-    m_floats[0] = v0, m_floats[1] = v1, m_floats[2] = 0.0, m_floats[3] = 0.0;   
+Vector2::Vector2(const tf2Scalar &v0, const tf2Scalar &v1) {
+    m_floats[0] = v0, m_floats[1] = v1, m_floats[2] = 0.0, m_floats[3] = 0.0;
 }
 
-Vector2& Vector2::set(const tf2Scalar &v0, const tf2Scalar &v1) {
+std::string Vector2::to_str(int with, int precision) const {
+    std::ostringstream ss;
+    ss << std::setw(with) << std::setprecision(precision) << std::fixed << this->m_floats[0] << ", ";
+    ss << std::setw(with) << std::setprecision(precision) << std::fixed << this->m_floats[1] << "]";
+    return ss.str();
+}
+
+Vector2 &Vector2::set(const tf2Scalar &v0, const tf2Scalar &v1) {
     m_floats[0] = v0;
     m_floats[1] = v1;
     return *this;
@@ -63,16 +71,13 @@ tf2Scalar Vector2::dot(const Vector2 &v) const {
 }
 
 tf2Scalar &Vector2::operator[](int index) {
-    if (index < 0 || index >= 2) {
-        throw std::out_of_range("Index out of bounds in Vector2::operator[]");
-    }
+
+	tf2FullAssert(index >= 0 && index < 2);
     return m_floats[index];
 }
 
-const tf2Scalar &Vector2::operator[](int index) const {
-    if (index < 0 || index >= 2) {
-        throw std::out_of_range("Index out of bounds in Vector2::operator[] const");
-    }
+const tf2Scalar &Vector2::operator[](int index) const {    
+	tf2FullAssert(index >= 0 && index < 2);
     return m_floats[index];
 }
 
@@ -93,8 +98,7 @@ tf2Scalar Vector2::length() const {
  * @return true if points are equal
  **/
 bool Vector2::operator==(const Vector2 &p) const {
-    const tf2Scalar epsilon = 1e-9;
-    return (std::fabs(m_floats[0] - p.m_floats[0]) < epsilon) && (std::fabs(m_floats[1] - p.m_floats[1]) < epsilon);
+    return (std::fabs(m_floats[0] - p.m_floats[0]) < TF2SIMD_EPSILON) && (std::fabs(m_floats[1] - p.m_floats[1]) < TF2SIMD_EPSILON);
 }
 
 /**

@@ -3,6 +3,7 @@
 
 #include "tf2/LinearMath/Scalar.hpp"
 #include "tf2/LinearMath/Vector3.hpp"
+#include <string>
 
 namespace tf2 {
 
@@ -26,6 +27,14 @@ class Vector4 : protected Vector3 {
      * @param v3
      **/
     Vector4(const tf2Scalar &v0, const tf2Scalar &v1, const tf2Scalar &v2, const tf2Scalar &v3);
+ /**
+     * convert to string
+     * @param with width of each element
+     * @param precision precision of each element
+     * @return string representation
+     **/
+    std::string to_str(int with = 0, int precision = 6) const ;
+    
 
     Vector4 &operator+=(const Vector4 &v);
 
@@ -96,6 +105,7 @@ class Vector4 : protected Vector3 {
      **/
     Vector3 &head();
 
+    using Vector3::m_floats;
 };
 }; // namespace tf2
 

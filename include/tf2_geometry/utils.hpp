@@ -2,9 +2,10 @@
 #define Tf2_GEOMETRY__UTILS_HPP
 
 
-#include <tf2_geometry/core.hpp>
+#include "tf2/LinearMath/Scalar.hpp"
+#include "tf2/LinearMath/Vector3.hpp"
 
-namespace tuw2
+namespace tf2
 {
 
 /**

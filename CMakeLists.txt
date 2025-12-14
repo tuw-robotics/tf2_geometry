@@ -19,6 +19,7 @@ add_library(${PROJECT_NAME} SHARED
   src/point3d.cpp
   src/line2d.cpp
   src/plane3d.cpp
+  src/pose2d.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

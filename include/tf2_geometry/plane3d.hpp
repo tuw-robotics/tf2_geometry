@@ -56,13 +56,13 @@ class Plane3D : public Vector4 {
      * @param des closest point on plane
      * @return ref to closestPoint des
      **/
-    Point3D &closestPointOnPlane(const Point3D &point, Point3D &des) const;
+    Point3D &closest_point_on_plane(const Point3D &point, Point3D &des) const;
 
     /** Finds the distance of a point to the plane
      * @param p point
      * @return distance
      **/
-    tf2Scalar distanceTo(const Point3D &p) const;
+    tf2Scalar distance_to(const Point3D &p) const;
 
     /** Finds a line plane intersection
      * @param p1 line start
@@ -71,7 +71,7 @@ class Plane3D : public Vector4 {
      * @param epsilon computation tolerance
      * @return true if there is an intersection
      **/
-    bool intersectionLine(const Vector3 &p1,
+    bool intersection(const Vector3 &p1,
                           const Vector3 &p2,
                           Vector3 &intersection,
                           tf2Scalar epsilon = 0.00001) const;

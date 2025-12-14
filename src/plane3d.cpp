@@ -30,7 +30,7 @@ Plane3D &Plane3D::nomalize() {
     return *this;
 }
 
-bool Plane3D::intersectionLine(const Vector3 &p1, const Vector3 &p2, Vector3 &intersection, tf2Scalar epsilon) const {
+bool Plane3D::intersection(const Vector3 &p1, const Vector3 &p2, Vector3 &intersection, tf2Scalar epsilon) const {
 
     auto &n = this->head();
     Vector3 v = p2 - p1;
@@ -76,12 +76,12 @@ tf2Scalar &Plane3D::d() {
     return this->m_floats[3];
 }
 
-tf2Scalar Plane3D::distanceTo(const Point3D &p) const {
+tf2Scalar Plane3D::distance_to(const Point3D &p) const {
     tf2Scalar distance = this->head().dot(p) + (*this)[3];
     return distance;
 }
 
-Point3D &Plane3D::closestPointOnPlane(const Point3D &src, Point3D &des) const {
-    des = src - this->head() * this->distanceTo(src);
+Point3D &Plane3D::closest_point_on_plane(const Point3D &src, Point3D &des) const {
+    des = src - this->head() * this->distance_to(src);
     return des;
 }

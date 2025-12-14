@@ -46,7 +46,7 @@ class Line2D : public Vector3 {
      **/
     Line2D(const tf2Scalar &x0, const tf2Scalar &y0, const tf2Scalar &x1, const tf2Scalar &y1, bool normalize = true);
     /**
-     * constructor to create a line from points
+     * creates a line from points
      * @param x0
      * @param y0
      * @param x1
@@ -55,14 +55,25 @@ class Line2D : public Vector3 {
      * @return ref to this
      **/
     Line2D &create(const tf2Scalar &x0, const tf2Scalar &y0, const tf2Scalar &x1, const tf2Scalar &y1, bool normalize = true);
+    
+    
     /**
-     * constructor to create a line from points
+     * creates a line from points
      * @param p1
      * @param p2
      * @param normalize normalizes equation on true
      * @return ref to this
      **/
     Line2D &create(const Point2D &p0, const Point2D &p1, bool normalize = true);
+
+    /**
+     * convert to string
+     * @param with width of each element
+     * @param precision precision of each element
+     * @return string representation
+     **/
+    std::string to_str(int with = 0, int precision = 6) const ;
+    
     /**
      * computes the distance to a point
      * @param x
@@ -70,14 +81,14 @@ class Line2D : public Vector3 {
      * @returns the minimal distance to a point
      * @pre normalize
      **/
-    tf2Scalar distanceTo(const tf2Scalar &x, const tf2Scalar &y) const;
+    tf2Scalar distance_to(const tf2Scalar &x, const tf2Scalar &y) const;
     /**
      * computes the distance to a point
      * @param p
      * @returns the minimal distance to a point
      * @pre normalize
      **/
-    tf2Scalar distanceTo(const Point2D &p) const;
+    tf2Scalar distance_to(const Point2D &p) const;
     /**
      * computes a point on the line with the shortest distance to the point given
      * @param x
@@ -85,14 +96,14 @@ class Line2D : public Vector3 {
      * @returns point on line
      * @pre normalize
      **/
-    Point2D pointOnLine(const tf2Scalar &x, const tf2Scalar &y) const;
+    Point2D point_on_line(const tf2Scalar &x, const tf2Scalar &y) const;
     /**
      * computes a point on the line with the shortest distance to the point given
      * @param p
      * @returns point on line
      * @pre normalize
      **/
-    Point2D pointOnLine(const Point2D &p) const;
+    Point2D point_on_line(const Point2D &p) const;
 
     /**
      * computes the intersection point of two lines

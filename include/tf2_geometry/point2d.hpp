@@ -55,12 +55,12 @@ class Point2D : public Vector2 {
      * returns the distance to an other point
      * @return disance
      **/
-    tf2Scalar distanceTo(const Point2D &p0) const;
+    tf2Scalar distance_to(const Point2D &p0) const;
     /**
      * returns the distance to an other point
      * @return disance
      **/
-    tf2Scalar distanceTo(const tf2Scalar &x0, const tf2Scalar &y0) const;
+    tf2Scalar distance_to(const tf2Scalar &x0, const tf2Scalar &y0) const;
 
     /**
      * assignment operator from Vector3
@@ -69,20 +69,6 @@ class Point2D : public Vector2 {
      **/
     Point2D& operator=(const Vector2 &v);
 
-    /**
-     * angle form origin to point (alpha in polar space)
-     * @see radius
-     * @see Polar2D
-     * @return angle between -PI and +PI
-     **/
-    tf2Scalar angle() const;
-    /**
-     * distance to origin (rho in polar space)
-     * @see angle
-     * @see Polar2D
-     * @return distance
-     **/
-    tf2Scalar radius() const;
 
 };
 }; // namespace tf2

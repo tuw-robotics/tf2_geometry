@@ -14,6 +14,6 @@ TEST(Point2D, distance_to)
 {
   tf2::Point2D p0(3.0,1.4);
   tf2::Point2D p1(1.0,1.4);
-  tf2Scalar d = p0.distanceTo(p1);
+  tf2Scalar d = p0.distance_to(p1);
   ASSERT_TRUE((d == 2.0));
 }

@@ -50,7 +50,8 @@ if(BUILD_TESTING)
     test/test_vector4.cpp 
     test/test_point2d.cpp 
     test/test_line2d.cpp
-    test/test_plane3d.cpp)  # Need to link .cpp file under test
+    test/test_plane3d.cpp
+    test/test_pose2d.cpp)  # Need to link .cpp file under test
   target_include_directories(test_geometry PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>

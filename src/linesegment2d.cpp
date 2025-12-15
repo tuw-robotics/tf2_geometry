@@ -3,39 +3,39 @@
 using namespace tf2;
 LineSegment2D::LineSegment2D() {}
 LineSegment2D::LineSegment2D(const LineSegment2D & l)
-: Line2D(l.line()), p0_(l.p0()), p1_(l.p1())
+: Line2D(l.line()), m_p0(l.p0()), m_p1(l.p1())
 {
 }
 LineSegment2D::LineSegment2D(const Point2D & p0, const Point2D & p1)
-: Line2D(p0, p1, true), p0_(p0), p1_(p1)
+: Line2D(p0, p1, true), m_p0(p0), m_p1(p1)
 {
 }
 LineSegment2D::LineSegment2D(
   const tf2Scalar & x0, const tf2Scalar & y0, const tf2Scalar & x1, const tf2Scalar & y1)
-: Line2D(x0, y0, x1, y1, true), p0_(x0, y0), p1_(x1, y1)
+: Line2D(x0, y0, x1, y1, true), m_p0(x0, y0), m_p1(x1, y1)
 {
 }
-const tf2Scalar & LineSegment2D::x0() const {return p0_.x();}
-const tf2Scalar & LineSegment2D::y0() const {return p0_.y();}
-const tf2Scalar & LineSegment2D::x1() const {return p1_.x();}
-const tf2Scalar & LineSegment2D::y1() const {return p1_.y();}
+const tf2Scalar & LineSegment2D::x0() const {return m_p0.x();}
+const tf2Scalar & LineSegment2D::y0() const {return m_p0.y();}
+const tf2Scalar & LineSegment2D::x1() const {return m_p1.x();}
+const tf2Scalar & LineSegment2D::y1() const {return m_p1.y();}
 tf2Scalar LineSegment2D::angle() const
 {
-  tf2Scalar dx = p1_.x() - p0_.x();
-  tf2Scalar dy = p1_.y() - p0_.y();
+  tf2Scalar dx = m_p1.x() - m_p0.x();
+  tf2Scalar dy = m_p1.y() - m_p0.y();
   return tf2Atan2(dy, dx);
 }
 Point2D LineSegment2D::pc() const
 {
-  tf2Scalar dx = p1_.x() - p0_.x();
-  tf2Scalar dy = p1_.y() - p0_.y();
-  return Point2D(p0_.x() + dx / 2., p0_.y() + dy / 2.);
+  tf2Scalar dx = m_p1.x() - m_p0.x();
+  tf2Scalar dy = m_p1.y() - m_p0.y();
+  return Point2D(m_p0.x() + dx / 2., m_p0.y() + dy / 2.);
 }
-const Point2D & LineSegment2D::p0() const {return p0_;}
-const Point2D & LineSegment2D::p1() const {return p1_;}
+const Point2D & LineSegment2D::p0() const {return m_p0;}
+const Point2D & LineSegment2D::p1() const {return m_p1;}
 const Line2D & LineSegment2D::line() const {return *this;}
 
-tf2Scalar LineSegment2D::length() const {return p0_.distance_to(p1_);}
+tf2Scalar LineSegment2D::length() const {return m_p0.distance_to(m_p1);}
 /// comparison operator @return true on equal
 bool LineSegment2D::operator==(const LineSegment2D & o) const
 {
@@ -45,7 +45,7 @@ LineSegment2D & LineSegment2D::set(
   const tf2Scalar & x0, const tf2Scalar & y0, const tf2Scalar & x1, const tf2Scalar & y1)
 {
   Line2D::create(x0, y0, x1, y1, true);
-  p0_.set(x0, y0), p1_.set(x1, y1);
+  m_p0.set(x0, y0), m_p1.set(x1, y1);
   return *this;
 }
 LineSegment2D & LineSegment2D::set(const Point2D & p0, const Point2D & p1)

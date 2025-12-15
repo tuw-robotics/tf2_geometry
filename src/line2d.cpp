@@ -16,6 +16,10 @@ Line2D::Line2D(const tf2Scalar &x0, const tf2Scalar &y0, const tf2Scalar &x1, co
     create(x0, y0, x1, y1, normalize);
 }
 
+Line2D::Line2D(const Point2D &p0, const Point2D &p1, bool normalize) {
+    create(p0, p1, normalize);
+}
+
 Line2D &Line2D::create(const tf2Scalar &x0, const tf2Scalar &y0, const tf2Scalar &x1, const tf2Scalar &y1, bool normalize) {
     this->a() = y0 - y1, this->b() = x1 - x0, this->c() = x0 * y1 - y0 * x1; /// cross product with homogenios vectors
     if (normalize) {

@@ -12,7 +12,7 @@ namespace tf2
 class LineSegment2D : public Line2D
 {
 protected:
-  Point2D p0_, p1_;  /// the lines endpoints
+  Point2D m_p0, m_p1;  /// the lines endpoints
 
 public:
     // This is the type of the base class

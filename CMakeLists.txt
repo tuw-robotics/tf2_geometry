@@ -18,6 +18,7 @@ add_library(${PROJECT_NAME} SHARED
   src/point2d.cpp
   src/point3d.cpp
   src/line2d.cpp
+  src/linesegment2d.cpp
   src/plane3d.cpp
   src/transform2d.cpp
 )

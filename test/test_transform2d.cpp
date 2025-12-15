@@ -53,8 +53,11 @@ TEST(pose2d, operator_multiply)
 
   tf2::Point2D point1(sqrt(2), 0.0);
   point1*=pose0;
-  ASSERT_NEAR(4, point_in_base.x(), tolerance);
-  ASSERT_NEAR(0, point_in_base.y(), tolerance);
+  ASSERT_NEAR(4, point1.x(), tolerance);
+  ASSERT_NEAR(0, point1.y(), tolerance);
+  point1/=pose0;
+  ASSERT_NEAR(sqrt(2), point1.x(), tolerance);
+  ASSERT_NEAR(0, point1.y(), tolerance);
 
   // Pose
   tf2::Transform2D pose_in_target(0.0, sqrt(2)*2, -M_PI/2.0);
@@ -63,12 +66,22 @@ TEST(pose2d, operator_multiply)
   ASSERT_NEAR(1, pose_in_base.y(), tolerance);
   ASSERT_NEAR(-M_PI/4, pose_in_base.rotation(), tolerance);
 
+
+  tf2::Transform2D pose_in_target1 = pose0 / pose_in_base;
+  ASSERT_NEAR(0,         pose_in_target1.x(), tolerance);
+  ASSERT_NEAR(sqrt(2)*2, pose_in_target1.y(), tolerance);
+  ASSERT_NEAR(-M_PI/2.0, pose_in_target1.rotation(), tolerance);
+
   // Pose
   tf2::Transform2D pose1(0.0, sqrt(2)*2, -M_PI/2.0);
   pose1*=pose0;
   ASSERT_NEAR(1, pose1.x(), tolerance);
   ASSERT_NEAR(1, pose1.y(), tolerance);
   ASSERT_NEAR(-M_PI/4, pose1.rotation(), tolerance);
+  pose1/=pose0;
+  ASSERT_NEAR(0, pose1.x(), tolerance);
+  ASSERT_NEAR(sqrt(2)*2, pose1.y(), tolerance);
+  ASSERT_NEAR(-M_PI/2.0, pose1.rotation(), tolerance);
 }
 
 TEST(pose2d, inverse)

@@ -40,6 +40,13 @@ class Vector2 : protected Vector3 {
      */
     Vector2 &set(const tf2Scalar &x, const tf2Scalar &y);
 
+    /**
+     * set point coordinates
+     * @param Vector2
+     * @return reference to this
+     */
+    Vector2 &set(const Vector2 &v);
+
     Vector2 &operator+=(const Vector2 &v);
 
     Vector2 &operator-=(const Vector2 &v);

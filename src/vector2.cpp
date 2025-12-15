@@ -25,6 +25,11 @@ Vector2 &Vector2::set(const tf2Scalar &v0, const tf2Scalar &v1) {
     m_floats[1] = v1;
     return *this;
 }
+Vector2 &Vector2::set(const Vector2 &v) {
+    m_floats[0] = v.m_floats[0];
+    m_floats[1] = v.m_floats[1];
+    return *this;
+}
 
 Vector2 &Vector2::operator+=(const Vector2 &v) {
     m_floats[0] += v.m_floats[0], m_floats[1] += v.m_floats[1];

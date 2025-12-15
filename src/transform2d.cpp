@@ -13,100 +13,68 @@ Transform2D::Transform2D(tf2Scalar x, tf2Scalar y, tf2Scalar orientation_) : m_t
 Transform2D::Transform2D(const Point2D &position, const Point2D &point_ahead)
     : m_translation(position), m_rotation((point_ahead - position).angle()), m_cache_uptodate(false) {}
 
-/** set the pose
- * @param x
- * @param y
- * @param phi (orientation_)
- * @return this reference
- **/
-Transform2D &Transform2D::set(tf2Scalar x, tf2Scalar y, tf2Scalar phi) {
-    angle_normalize(phi, -M_PI, +M_PI);
+
+Transform2D &Transform2D::set(tf2Scalar x, tf2Scalar y, tf2Scalar rotation) {
     m_translation.set(x, y);
-    m_rotation = phi;
+    m_rotation = rotation;
     m_cache_uptodate = false;
     return *this;
 }
-/**
- * set the pose based on two points in world coordinates
- * @param position
- * @param point_ahead
- * @return this reference
- **/
+
+Transform2D &Transform2D::set(const Point2D &position, tf2Scalar rotation){
+    m_translation.set(position);
+    m_rotation = rotation;
+    m_cache_uptodate = false;
+    return *this;
+}
+
 Transform2D &Transform2D::set(const Point2D &position, const Point2D &point_ahead) {
     m_translation.set(position.x(), position.y());
     m_rotation = (point_ahead - position).angle();
     m_cache_uptodate = false;
     return *this;
 }
-/** set the pose
- * @param p pose
- * @return this reference
- **/
 Transform2D &Transform2D::set(const Transform2D &p) {
     m_translation = p.m_translation;
     m_rotation = p.m_rotation;
     m_cache_uptodate = false;
     return *this;
 }
-/** location as Point2D
- * @return translational
- **/
 const Point2D &Transform2D::position() const {
     return m_translation;
 }
 
-/** translational x component
- * @return x component
- **/
 const tf2Scalar &Transform2D::x() const {
     return m_translation.m_floats[0];
 }
-/** translational y component
- * @return y component
- **/
+
+void Transform2D::set_x(const tf2Scalar x) {
+    this->m_translation.m_floats[0] = x;
+    m_cache_uptodate = false;
+}
+
 const tf2Scalar &Transform2D::y() const {
     return m_translation.m_floats[1];
 }
-/** roational component
- * @return rotation
- **/
+
+void Transform2D::set_y(const tf2Scalar y) {
+    this->m_translation.m_floats[1] = y;
+    m_cache_uptodate = false;
+}
+
 const tf2Scalar &Transform2D::rotation() const {
     return m_rotation;
 }
-/** location as Point2D
- * @return translational
- **/
-Point2D &Transform2D::position() {
-    return m_translation;
-}
-/** translational x component
- * @return x component
- **/
-tf2Scalar &Transform2D::x() {
-    return m_translation.m_floats[0];
-}
-/** translational y component
- * @return y component
- **/
-tf2Scalar &Transform2D::y() {
-    return m_translation.m_floats[1];
-}
-/** roational component
- * @return rotation
- **/
-tf2Scalar &Transform2D::rotation() {
-    return m_rotation;
+
+void Transform2D::set_rotation(const tf2Scalar roation) {
+    this->m_rotation = roation;
+    m_cache_uptodate = false;
 }
 
-/** normalizes the orientation value betwenn -PI and PI
- **/
 void Transform2D::normalize_orientation() {
     angle_normalize(m_rotation, -M_PI, +M_PI);
 }
-/**
- * enforces the recompuation of the cached value of cos(theta) and sin(theta),
- * recomputing it only once when theta changes.
- */
+
 void Transform2D::recompute_cached_cos_sin() const {
     m_costheta = tf2Cos(m_rotation);
     m_sintheta = tf2Sin(m_rotation);
@@ -114,117 +82,87 @@ void Transform2D::recompute_cached_cos_sin() const {
     m_translation_inv = -t;
     m_cache_uptodate = true;
 }
-/**
- * Updates the cached value of cos(phi) and sin(phi),
- * recomputing it only once when phi changes.
- **/
+
 void Transform2D::update_cached() const {
     if (m_cache_uptodate) {
         return;
     }
     recompute_cached_cos_sin();
 }
-/**
- * transforms a point from pose target space into pose base space
- * @note you have to update the cached cos and sin values in advance
- * @see Transform2D::update_cached_cos_sin
- * @param src point in pose target space, a point seen from the current pose
- * @param des point in pose base space, a point in the same frame as the  current pose
- * @return ref point in pose base space, a point in the same frame as the  current pose
- **/
-Point2D &Transform2D::transform_into_base(const Point2D &src, Point2D &des) const {
+
+Point2D &Transform2D::transform_into_target(const Point2D &src, Point2D &des) const {
     this->update_cached();
-    des.set(src.x() * m_costheta - src.y() * m_sintheta + x(), src.x() * m_sintheta + src.y() * m_costheta + y());
+    des.set(src.x() * m_costheta + src.y() * m_sintheta + m_translation_inv.x(), -src.x() * m_sintheta + src.y() * m_costheta + m_translation_inv.y());
     return des;
 }
-/**
- * transforms a point from pose target space into pose base space
- * @note you have to update the cached cos and sin values in advance
- * @see Transform2D::update_cached_cos_sin
- * @param src point in pose target space, a point seen from the current pose
- * @return point in pose base space, a point in the same frame as the  current pose
- **/
+
+Point2D Transform2D::transform_into_target(const Point2D &src) const {
+    Point2D des;
+    return this->transform_into_target(src, des);
+}
+
+Point2D &Transform2D::transform_into_base(const Point2D &src, Point2D &des) const {
+    this->update_cached();
+    des.set(src.x() * m_costheta - src.y() * m_sintheta + m_translation.x(), src.x() * m_sintheta + src.y() * m_costheta + m_translation.y());
+    return des;
+}
+
 Point2D Transform2D::transform_into_base(const Point2D &src) const {
     Point2D des;
     return transform_into_base(src, des);
 }
-/**
- * transforms a Transform2D from pose target space into pose base space
- * the orientation will be normalized between -PI and PI
- * @param src pose in pose target space, a pose seen from the current pose
- * @return pose in target frame, a pose in the same frame as the  current pose
- **/
+
 Point2D Transform2D::operator*(const Point2D &src) const {
     return this->transform_into_base(src);
 }
 
-/**
- * transforms a Transform2D from pose target space into pose base space
- * the orientation will be normalized between -PI and PI
- * @param src pose in pose target space, a pose seen from the current pose
- * @param des pose in pose base space, a pose in the same frame as the  current pose
- * @return pose in target frame, a pose in the same frame as the  current pose
- **/
-Transform2D& Transform2D::transform_into_base(const Transform2D &src, Transform2D &des) const {
+Transform2D &Transform2D::transform_into_target(const Transform2D &src, Transform2D &des) const {
+    this->transform_into_target(src.m_translation, des.m_translation);
+    des.m_rotation = angle_normalize(src.m_rotation - this->m_rotation);
+    des.m_cache_uptodate = false;
+    return des;
+}
+
+Transform2D Transform2D::transform_into_target(const Transform2D &src) const {
+    Transform2D des;
+    return transform_into_target(src, des);
+}
+
+Transform2D Transform2D::operator/(const Transform2D &src) const {
+    return this->transform_into_target(src);
+}
+
+Transform2D &Transform2D::operator/=(const Transform2D &src) {
+    update_cached();
+    return src.transform_into_target(*this, *this);
+}
+
+Transform2D &Transform2D::transform_into_base(const Transform2D &src, Transform2D &des) const {
     this->transform_into_base(src.m_translation, des.m_translation);
     des.m_rotation = angle_normalize(src.m_rotation + this->m_rotation);
     des.m_cache_uptodate = false;
     return des;
 }
 
-/**
- * transforms a Transform2D from pose target space into pose base space
- * the orientation will be normalized between -PI and PI
- * @param src pose in pose target space, a pose seen from the current pose
- * @return pose in target frame, a pose in the same frame as the  current pose
- **/
 Transform2D Transform2D::transform_into_base(const Transform2D &src) const {
     Transform2D des;
     return transform_into_base(src, des);
 }
 
-/**
- * transforms a Transform2D from pose target space into pose base space
- * the orientation will be normalized between -PI and PI
- * @param src pose in pose target space, a pose seen from the current pose
- * @return pose in target frame, a pose in the same frame as the  current pose
- **/
 Transform2D Transform2D::operator*(const Transform2D &src) const {
     return this->transform_into_base(src);
 }
 
-/**
- * transforms a Transform2D from pose target space into pose base space
- * the orientation will be normalized between -PI and PI
- * @param src pose in pose target space, a pose seen from the current pose
- * @return pose in target frame, updated this
- * @see Pose2D::transform_into_base
- **/
 Transform2D &Transform2D::operator*=(const Transform2D &src) {
     update_cached();
-    src.transform_into_base(this->m_translation, this->m_translation);
-    this->m_rotation = angle_normalize(src.m_rotation + this->m_rotation);
-    this->m_cache_uptodate = false;
-    return *this;
+    return src.transform_into_base(*this, *this);
 }
 
-/**
- * invert pose
- * @return inverted pose
- **/
 Transform2D &Transform2D::inverse(Transform2D &des) const {
     this->update_cached();
-    des.set(0, 0, -this->m_rotation);
-    des.recompute_cached_cos_sin();
-    Point2D tmp;
-    des.transform_into_base(this->position(), tmp);
-    des.position() = -tmp;
+    des.set(this->m_translation_inv, -this->m_rotation);
     return des;
 }
-/**
- * invert pose
- * @return inverted pose
- **/
 Transform2D Transform2D::inverse() const {
     Transform2D des;
     return inverse(des);

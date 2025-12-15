@@ -10,11 +10,11 @@ namespace tf2 {
  **/
 class Transform2D {
   protected:
-    Point2D m_translation;                  /// translation t
-    double m_rotation;                      /// rotation in rad
-    mutable bool m_cache_uptodate;          /// cache uptodate flag, on true the cached values are valid
-    mutable double m_costheta, m_sintheta;  /// cached precomputed cos() & sin() of theta.
-    mutable Point2D m_translation_inv;      /// cached inverse translation - (Rinv * t)
+    Point2D m_translation;                    /// translation t
+    tf2Scalar m_rotation;                     /// rotation in rad
+    mutable bool m_cache_uptodate;            /// cache uptodate flag, on true the cached values are valid
+    mutable tf2Scalar m_costheta, m_sintheta; /// cached precomputed cos() & sin() of theta.
+    mutable Point2D m_translation_inv;        /// cached inverse translation - (Rinv * t)
 
     /**
      * Updates the cached value of cos(phi), sin(phi) and the inverse translation,
@@ -32,7 +32,7 @@ class Transform2D {
      * @param point
      * @param orientation
      **/
-    Transform2D(const Point2D &p, double orientation);
+    Transform2D(const Point2D &p, tf2Scalar orientation);
     /**
      * copy constructor
      * @param p transfrom
@@ -44,7 +44,7 @@ class Transform2D {
      * @param y
      * @param orientation
      **/
-    Transform2D(double x, double y, double orientation);
+    Transform2D(tf2Scalar x, tf2Scalar y, tf2Scalar orientation);
     /**
      * copy constructor
      * @param position
@@ -58,7 +58,14 @@ class Transform2D {
      * @param orientation
      * @return this reference
      **/
-    Transform2D &set(double x, const double y, double orientation);
+    Transform2D &set(tf2Scalar x, const tf2Scalar y, tf2Scalar orientation);
+    /**
+     * defines the transform
+     * @param position
+     * @param orientation
+     * @return this reference
+     **/
+    Transform2D &set(const Point2D &position, tf2Scalar orientation);
     /**
      * set the pose based on two points in world coordinates
      * @param position
@@ -81,47 +88,41 @@ class Transform2D {
     const Point2D &position() const;
 
     /**
-     * location as vector
-     * @return translational
-     **/
-    Point2D &position();
-
-    /**
      * point in front of the pose
      * @param d distance ahead
      * @return point
      **/
-    const double &x() const;
+    const tf2Scalar &x() const;
+
+    /**
+     * sets the x component
+     * @param x
+     **/
+    void set_x(const tf2Scalar x);
 
     /**
      * translational y component
      * @return y component
      **/
-    double &x();
+    const tf2Scalar &y() const;
 
     /**
-     * translational y component
-     * @return y component
+     * sets the y component
+     * @param y
      **/
-    const double &y() const;
-
-    /**
-     * rotational component
-     * @return rotation
-     **/
-    double &y();
+    void set_y(const tf2Scalar y);
 
     /**
      * rotational component
      * @return rotation
      **/
-    const double &rotation() const;
+    const tf2Scalar &rotation() const;
 
     /**
-     * position
-     * @return rotation
+     * sets the rotational component
+     * @param rotation
      **/
-    double &rotation();
+    void set_rotation(const tf2Scalar roation);
 
     /**
      * normalizes the orientation value betwenn -PI and PI
@@ -135,84 +136,131 @@ class Transform2D {
     void recompute_cached_cos_sin() const;
 
     /**
-     * transforms a point from pose target space into pose base space
-     * @note you have to update the cached cos and sin values in advance
-     * @see Pose2D::update_cached_cos_sin
-     * @param src point in pose target space, a point seen from the current pose
-     * @param des point in pose base space, a point in the same frame as the  current pose
-     * @return ref point in pose base space, a point in the same frame as the  current pose
+     * transforms a point from transform parent frame into the child frame
+     * it uses the cached inverse transform internally
+     * @param src point in transform parent frame
+     * @param des point in transform child frame
+     * @return ref point in transform child frame
+     **/
+    Point2D &transform_into_target(const Point2D &src, Point2D &des) const;
+    /**
+     * transforms a point from transform parent frame into the child frame
+     * it uses the cached inverse transform internally
+     * @param src point in transform parent frame
+     * @return ref point in transform child frame
+     **/
+    Point2D transform_into_target(const Point2D &src) const;
+
+    /**
+     * transforms a point from transfrom child frame space into the parent frame
+     * @param src point in transform child frame
+     * @param des point in transform parent frame
+     * @return ref point in transform parent frame
      **/
     Point2D &transform_into_base(const Point2D &src, Point2D &des) const;
 
     /**
-     * transforms a point from pose target space into pose base space
-     * @note you have to update the cached cos and sin values in advance
-     * @see Pose2D::update_cached_cos_sin
-     * @param src point in pose target space, a point seen from the current pose
-     * @return ref point in pose base space, a point in the same frame as the  current pose
+     * transforms a point from transfrom child frame space into the parent frame
+     * @param src point in transform child frame
+     * @return ref point in transform parent frame
      **/
     Point2D transform_into_base(const Point2D &src) const;
 
     /**
-     * transforms a Pose2D from pose target space into pose base space
-     * the orientation will be normalized between -PI and PI
-     * @param src pose in pose target space, a pose seen from the current pose
-     * @return pose in target frame, a pose in the same frame as the  current pose
-     * @see Pose2D::transform_into_base
-     * @see Pose2D::transform_into_base
+     * transforms a point from transfrom child frame space into the parent frame
+     * @param src point in transform child frame
+     * @return ref point in point parent frame
      **/
     Point2D operator*(const Point2D &src) const;
 
     /**
-     * transforms a Pose2D from pose target space into pose base space
-     * the orientation will be normalized between -PI and PI
-     * @param src pose in pose target space, a pose seen from the current pose
-     * @param des pose in pose base space, a pose in the same frame as the  current pose
-     * @return pose in target frame, a pose in the same frame as the  current pose
+     * transforms a transform/pose from parent frame space into the child frame
+     * it uses the cached inverse transform internally
+     * e.g this = base_link -> scan, src = base_link -> object, des = scan -> object
+     * @param src transform with child same as current parent frame
+     * @param des transform in parent frame
+     * @return pose in parent frame
+     **/
+    Transform2D &transform_into_target(const Transform2D &src, Transform2D &des) const;
+
+    /**
+     * transforms a transform/pose from parent frame space into the child frame
+     * it uses the cached inverse transform internally
+     * e.g this = base_link -> scan, src = base_link -> object, des = scan -> object
+     * @param src transform with child same as current parent frame
+     * @return pose in parent frame
+     **/
+    Transform2D transform_into_target(const Transform2D &src) const;
+
+    /**
+     * transforms a transform/pose from parent frame space into the child frame
+     * it uses the cached inverse transform internally
+     * e.g this = base_link -> scan, src = base_link -> object, des = scan -> object
+     * @param src transform with child same as current parent frame
+     * @return pose in parent frame
+     **/
+    Transform2D operator/(const Transform2D &src) const;
+
+    /**
+     * transforms a transform/pose from parent frame space into the child frame
+     * it uses the cached inverse transform internally
+     * e.g this = base_link -> scan, src = base_link -> object, des = scan -> object
+     * @param src transform with child same as current parent frame
+     * @return pose in parent frame
+     **/
+    Transform2D &operator/=(const Transform2D &src);
+
+    /**
+     * transforms a transform/pose from child frame space into the parent frame
+     * e.g this = base_link -> scan, src = scan -> object, des = base_link -> object
+     * @param src transform with parent same as current child frame
+     * @param des transform in child frame
+     * @return pose in child frame
      **/
     Transform2D &transform_into_base(const Transform2D &src, Transform2D &des) const;
     /**
-     * transforms a Transform2D from pose target space into pose base space
-     * the orientation will be normalized between -PI and PI
-     * @param src pose in pose target space, a pose seen from the current pose
-     * @return pose in target frame, a pose in the same frame as the  current pose
+     * transforms a transform/pose from child frame space into the parent frame
+     * e.g this = base_link -> scan, src = scan -> object, des = base_link -> object
+     * @param src transform with parent same as current child frame
+     * @return pose in child frame
      **/
     Transform2D transform_into_base(const Transform2D &src) const;
 
     /**
-     * transforms a Transform2D from pose target space into pose base space
-     * the orientation will be normalized between -PI and PI
-     * @param src pose in pose target space, a pose seen from the current pose
-     * @return pose in target frame, a pose in the same frame as the  current pose
-     * @see Pose2D::transform_into_base
+     * transforms a transform/pose from child frame space into the parent frame
+     * e.g this = base_link -> scan, src = scan -> object, des = base_link -> object
+     * @param src transform with parent same as current child frame
+     * @return pose in child frame
      **/
     Transform2D operator*(const Transform2D &src) const;
 
     /**
-     * transforms a Transform2D from pose target space into pose base space
-     * the orientation will be normalized between -PI and PI
-     * @param src pose in pose target space, a pose seen from the current pose
-     * @return pose in target frame, updated this
-     * @see Pose2D::transform_into_base
+     * transforms a transform/pose from child frame space into the parent frame
+     * e.g this = base_link -> scan, src = scan -> object, des = base_link -> object
+     * @param src transform with parent same as current child frame
+     * @return pose in child frame
      **/
     Transform2D &operator*=(const Transform2D &src);
 
     /**
-     * invert pose
-     * @param des inverted pose
-     * @return inverted pose
+     * invert transform
+     * @param des inverted transform
+     * @return inverted transform
      **/
     Transform2D &inverse(Transform2D &des) const;
 
     /**
-     * invert pose
-     * @return inverted pose
+     * invert transform
+     * @return inverted transform
      **/
     Transform2D inverse() const;
 };
 
-TF2SIMD_FORCE_INLINE Point2D &operator*=(Point2D &des, const Transform2D &tf){
-  return tf.transform_into_base(des, des);
+TF2SIMD_FORCE_INLINE Point2D &operator*=(Point2D &des, const Transform2D &tf) {
+    return tf.transform_into_base(des, des);
+}
+TF2SIMD_FORCE_INLINE Point2D &operator/=(Point2D &des, const Transform2D &tf) {
+    return tf.transform_into_target(des, des);
 }
 
 } // namespace tf2

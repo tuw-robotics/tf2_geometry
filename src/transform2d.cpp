@@ -4,11 +4,11 @@ using namespace tf2;
 
 Transform2D::Transform2D() : m_translation(), m_rotation(0) {}
 
-Transform2D::Transform2D(const Point2D &p, tf2Scalar orientation_) : m_translation(p), m_rotation(orientation_), m_cache_uptodate(false) {}
+Transform2D::Transform2D(const Point2D &p, tf2Scalar roation) : m_translation(p), m_rotation(roation), m_cache_uptodate(false) {}
 
 Transform2D::Transform2D(const Transform2D &p) : m_translation(p.m_translation), m_rotation(p.m_rotation), m_cache_uptodate(false) {}
 
-Transform2D::Transform2D(tf2Scalar x, tf2Scalar y, tf2Scalar orientation_) : m_translation(x, y), m_rotation(orientation_), m_cache_uptodate(false) {}
+Transform2D::Transform2D(tf2Scalar x, tf2Scalar y, tf2Scalar roation) : m_translation(x, y), m_rotation(roation), m_cache_uptodate(false) {}
 
 Transform2D::Transform2D(const Point2D &position, const Point2D &point_ahead)
     : m_translation(position), m_rotation((point_ahead - position).angle()), m_cache_uptodate(false) {}
@@ -71,7 +71,7 @@ void Transform2D::set_rotation(const tf2Scalar roation) {
     m_cache_uptodate = false;
 }
 
-void Transform2D::normalize_orientation() {
+void Transform2D::normalize_roation() {
     angle_normalize(m_rotation, -M_PI, +M_PI);
 }
 
@@ -90,72 +90,72 @@ void Transform2D::update_cached() const {
     recompute_cached_cos_sin();
 }
 
-Point2D &Transform2D::transform_into_target(const Point2D &src, Point2D &des) const {
+Point2D &Transform2D::transform_into_child(const Point2D &src, Point2D &des) const {
     this->update_cached();
     des.set(src.x() * m_costheta + src.y() * m_sintheta + m_translation_inv.x(), -src.x() * m_sintheta + src.y() * m_costheta + m_translation_inv.y());
     return des;
 }
 
-Point2D Transform2D::transform_into_target(const Point2D &src) const {
+Point2D Transform2D::transform_into_child(const Point2D &src) const {
     Point2D des;
-    return this->transform_into_target(src, des);
+    return this->transform_into_child(src, des);
 }
 
-Point2D &Transform2D::transform_into_base(const Point2D &src, Point2D &des) const {
+Point2D &Transform2D::transform_into_parent(const Point2D &src, Point2D &des) const {
     this->update_cached();
     des.set(src.x() * m_costheta - src.y() * m_sintheta + m_translation.x(), src.x() * m_sintheta + src.y() * m_costheta + m_translation.y());
     return des;
 }
 
-Point2D Transform2D::transform_into_base(const Point2D &src) const {
+Point2D Transform2D::transform_into_parent(const Point2D &src) const {
     Point2D des;
-    return transform_into_base(src, des);
+    return transform_into_parent(src, des);
 }
 
 Point2D Transform2D::operator*(const Point2D &src) const {
-    return this->transform_into_base(src);
+    return this->transform_into_parent(src);
 }
 
-Transform2D &Transform2D::transform_into_target(const Transform2D &src, Transform2D &des) const {
-    this->transform_into_target(src.m_translation, des.m_translation);
+Transform2D &Transform2D::transform_into_child(const Transform2D &src, Transform2D &des) const {
+    this->transform_into_child(src.m_translation, des.m_translation);
     des.m_rotation = angle_normalize(src.m_rotation - this->m_rotation);
     des.m_cache_uptodate = false;
     return des;
 }
 
-Transform2D Transform2D::transform_into_target(const Transform2D &src) const {
+Transform2D Transform2D::transform_into_child(const Transform2D &src) const {
     Transform2D des;
-    return transform_into_target(src, des);
+    return transform_into_child(src, des);
 }
 
 Transform2D Transform2D::operator/(const Transform2D &src) const {
-    return this->transform_into_target(src);
+    return this->transform_into_child(src);
 }
 
 Transform2D &Transform2D::operator/=(const Transform2D &src) {
     update_cached();
-    return src.transform_into_target(*this, *this);
+    return src.transform_into_child(*this, *this);
 }
 
-Transform2D &Transform2D::transform_into_base(const Transform2D &src, Transform2D &des) const {
-    this->transform_into_base(src.m_translation, des.m_translation);
+Transform2D &Transform2D::transform_into_parent(const Transform2D &src, Transform2D &des) const {
+    this->transform_into_parent(src.m_translation, des.m_translation);
     des.m_rotation = angle_normalize(src.m_rotation + this->m_rotation);
     des.m_cache_uptodate = false;
     return des;
 }
 
-Transform2D Transform2D::transform_into_base(const Transform2D &src) const {
+Transform2D Transform2D::transform_into_parent(const Transform2D &src) const {
     Transform2D des;
-    return transform_into_base(src, des);
+    return transform_into_parent(src, des);
 }
 
 Transform2D Transform2D::operator*(const Transform2D &src) const {
-    return this->transform_into_base(src);
+    return this->transform_into_parent(src);
 }
 
 Transform2D &Transform2D::operator*=(const Transform2D &src) {
     update_cached();
-    return src.transform_into_base(*this, *this);
+    return src.transform_into_parent(*this, *this);
 }
 
 Transform2D &Transform2D::inverse(Transform2D &des) const {

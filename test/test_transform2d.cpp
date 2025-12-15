@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "tf2_geometry/pose2d.hpp"
+#include "tf2_geometry/transform2d.hpp"
 
 
 TEST(pose2d, constructor)
@@ -37,8 +37,9 @@ TEST(pose2d, inverse)
   // Point
   double tolerance = 0.001;
   tf2::Pose2D pose0(3.0, -1.0, M_PI/4.0);
-  tf2::Pose2D pose0inv = pose0.inverse();
   pose0.recompute_cached_cos_sin();
+  tf2::Pose2D pose0inv = pose0.inverse();
+  pose0inv.recompute_cached_cos_sin();
   tf2::Point2D point_in_target(4, 0.0);
   tf2::Point2D point_in_base = pose0inv.transform_into_base(point_in_target);
   ASSERT_NEAR(sqrt(2), point_in_base.x(), tolerance);

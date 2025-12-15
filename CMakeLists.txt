@@ -19,7 +19,7 @@ add_library(${PROJECT_NAME} SHARED
   src/point3d.cpp
   src/line2d.cpp
   src/plane3d.cpp
-  src/pose2d.cpp
+  src/transform2d.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -51,7 +51,7 @@ if(BUILD_TESTING)
     test/test_point2d.cpp 
     test/test_line2d.cpp
     test/test_plane3d.cpp
-    test/test_pose2d.cpp)  # Need to link .cpp file under test
+    test/test_transform2d.cpp)  # Need to link .cpp file under test
   target_include_directories(test_geometry PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>

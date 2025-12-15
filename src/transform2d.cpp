@@ -1,4 +1,4 @@
-#include "tf2_geometry/pose2d.hpp"
+#include "tf2_geometry/transform2d.hpp"
 #include "tf2_geometry/utils.hpp"
 using namespace tf2;
 
@@ -123,24 +123,13 @@ void Pose2D::update_cached_cos_sin() const {
  * transforms a point from pose target space into pose base space
  * @note you have to update the cached cos and sin values in advance
  * @see Pose2D::update_cached_cos_sin
- * @param src point in pose target space, a point seen from the current pose 
+ * @param src point in pose target space, a point seen from the current pose
  * @param des point in pose base space, a point in the same frame as the  current pose
  * @return ref point in pose base space, a point in the same frame as the  current pose
  **/
 Point2D &Pose2D::transform_into_base(const Point2D &src, Point2D &des) const {
     des.set(src.x() * costheta_ - src.y() * sintheta_ + 1.0 * x(), src.x() * sintheta_ + src.y() * costheta_ + 1.0 * y());
     return des;
-}
-/**
- * transforms a point from pose target space into pose base space
- * @note you have to update the cached cos and sin values in advance
- * @see Pose2D::update_cached_cos_sin
- * @param src point in pose target space, a point seen from the current pose
- * @return point in pose base space, a point in the same frame as the  current pose
- **/
-Point2D Pose2D::transform_into_base(const Point2D &src) const {
-    Point2D des;
-    return transform_into_base(src, des);
 }
 
 /**
@@ -157,6 +146,27 @@ Pose2D Pose2D::transform_into_base(const Pose2D &src, Pose2D &des) const {
 }
 
 /**
+ * transforms a point from pose target space into pose base space
+ * @note you have to update the cached cos and sin values in advance
+ * @see Pose2D::update_cached_cos_sin
+ * @param src point in pose target space, a point seen from the current pose
+ * @return point in pose base space, a point in the same frame as the  current pose
+ **/
+Point2D Pose2D::transform_into_base(const Point2D &src) const {
+    Point2D des;
+    return transform_into_base(src, des);
+}
+/**
+ * transforms a Pose2D from pose target space into pose base space
+ * the orientation will be normalized between -PI and PI
+ * @param src pose in pose target space, a pose seen from the current pose
+ * @return pose in target frame, a pose in the same frame as the  current pose
+ **/
+Point2D Pose2D::operator*(const Point2D &src) const {
+    return this->transform_into_base(src);
+}
+
+/**
  * transforms a Pose2D from pose target space into pose base space
  * the orientation will be normalized between -PI and PI
  * @param src pose in pose target space, a pose seen from the current pose
@@ -168,6 +178,17 @@ Pose2D Pose2D::transform_into_base(const Pose2D &src) const {
     des.theta() = angle_normalize(src.theta() + this->theta());
     return des;
 }
+
+/**
+ * transforms a Pose2D from pose target space into pose base space
+ * the orientation will be normalized between -PI and PI
+ * @param src pose in pose target space, a pose seen from the current pose
+ * @return pose in target frame, a pose in the same frame as the  current pose
+ **/
+Pose2D Pose2D::operator*(const Pose2D &src) const {
+    return this->transform_into_base(src);
+}
+
 /**
  * invert pose
  * @return inverted pose

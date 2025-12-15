@@ -127,6 +127,15 @@ class Pose2D {
      * @return ref point in pose base space, a point in the same frame as the  current pose
      **/
     Point2D transform_into_base(const Point2D &src) const;
+
+    /**
+     * transforms a Pose2D from pose target space into pose base space
+     * the orientation will be normalized between -PI and PI
+     * @param src pose in pose target space, a pose seen from the current pose
+     * @return pose in target frame, a pose in the same frame as the  current pose
+     **/
+    Point2D operator*(const Point2D &src) const;
+
     /**
      * transforms a Pose2D from pose target space into pose base space
      * the orientation will be normalized between -PI and PI
@@ -144,11 +153,20 @@ class Pose2D {
     Pose2D transform_into_base(const Pose2D &src) const;
 
     /**
+     * transforms a Pose2D from pose target space into pose base space
+     * the orientation will be normalized between -PI and PI
+     * @param src pose in pose target space, a pose seen from the current pose
+     * @return pose in target frame, a pose in the same frame as the  current pose
+     **/
+    Pose2D operator*(const Pose2D &src) const;
+
+    /**
      * invert pose
      * @param des inverted pose
      * @return inverted pose
      **/
     Pose2D &inverse(Pose2D &des) const;
+    
     /**
      * invert pose
      * @return inverted pose

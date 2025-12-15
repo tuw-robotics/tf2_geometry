@@ -133,7 +133,8 @@ void Transform2D::update_cached() const {
  * @return ref point in pose base space, a point in the same frame as the  current pose
  **/
 Point2D &Transform2D::transform_into_base(const Point2D &src, Point2D &des) const {
-    des.set(src.x() * m_costheta - src.y() * m_sintheta + 1.0 * x(), src.x() * m_sintheta + src.y() * m_costheta + 1.0 * y());
+    this->update_cached();
+    des.set(src.x() * m_costheta - src.y() * m_sintheta + x(), src.x() * m_sintheta + src.y() * m_costheta + y());
     return des;
 }
 /**
@@ -165,8 +166,7 @@ Point2D Transform2D::operator*(const Point2D &src) const {
  * @return pose in target frame, a pose in the same frame as the  current pose
  **/
 Transform2D& Transform2D::transform_into_base(const Transform2D &src, Transform2D &des) const {
-    update_cached();
-    transform_into_base(src.m_translation, des.m_translation);
+    this->transform_into_base(src.m_translation, des.m_translation);
     des.m_rotation = angle_normalize(src.m_rotation + this->m_rotation);
     des.m_cache_uptodate = false;
     return des;
@@ -201,7 +201,11 @@ Transform2D Transform2D::operator*(const Transform2D &src) const {
  * @see Pose2D::transform_into_base
  **/
 Transform2D &Transform2D::operator*=(const Transform2D &src) {
-    return this->transform_into_base(src, *this);
+    update_cached();
+    src.transform_into_base(this->m_translation, this->m_translation);
+    this->m_rotation = angle_normalize(src.m_rotation + this->m_rotation);
+    this->m_cache_uptodate = false;
+    return *this;
 }
 
 /**

@@ -39,6 +39,37 @@ TEST(pose2d, transform_into_base)
   ASSERT_NEAR(-M_PI/4, pose_in_base.rotation(), tolerance);
 }
 
+TEST(pose2d, operator_multiply)
+{
+  // Point
+  double tolerance = 0.001;
+  tf2::Transform2D pose0(3.0, -1.0, M_PI/4.0);
+  pose0.recompute_cached_cos_sin();
+  tf2::Point2D point_in_target(sqrt(2), 0.0);
+  tf2::Point2D point_in_base = pose0 * point_in_target;
+  ASSERT_NEAR(4, point_in_base.x(), tolerance);
+  ASSERT_NEAR(0, point_in_base.y(), tolerance);
+  
+
+  tf2::Point2D point1(sqrt(2), 0.0);
+  point1*=pose0;
+  ASSERT_NEAR(4, point_in_base.x(), tolerance);
+  ASSERT_NEAR(0, point_in_base.y(), tolerance);
+
+  // Pose
+  tf2::Transform2D pose_in_target(0.0, sqrt(2)*2, -M_PI/2.0);
+  tf2::Transform2D pose_in_base = pose0 * pose_in_target;
+  ASSERT_NEAR(1, pose_in_base.x(), tolerance);
+  ASSERT_NEAR(1, pose_in_base.y(), tolerance);
+  ASSERT_NEAR(-M_PI/4, pose_in_base.rotation(), tolerance);
+
+  // Pose
+  tf2::Transform2D pose1(0.0, sqrt(2)*2, -M_PI/2.0);
+  pose1*=pose0;
+  ASSERT_NEAR(1, pose1.x(), tolerance);
+  ASSERT_NEAR(1, pose1.y(), tolerance);
+  ASSERT_NEAR(-M_PI/4, pose1.rotation(), tolerance);
+}
 
 TEST(pose2d, inverse)
 {

@@ -210,5 +210,10 @@ class Transform2D {
      **/
     Transform2D inverse() const;
 };
+
+TF2SIMD_FORCE_INLINE Point2D &operator*=(Point2D &des, const Transform2D &tf){
+  return tf.transform_into_base(des, des);
+}
+
 } // namespace tf2
 #endif // TF2_GEOMETRY__POSE2D_HPP

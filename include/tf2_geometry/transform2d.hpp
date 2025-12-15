@@ -8,7 +8,7 @@ namespace tf2 {
  * class to represent a pose in 2D space
  * the class caches the cos(theta) and sin(theta) values
  **/
-class Pose2D {
+class Transform2D {
   protected:
     Point2D position_;                   /// position
     double orientation_;                 /// rotation in rad
@@ -22,10 +22,10 @@ class Pose2D {
     void update_cached_cos_sin() const;
 
   public:
-    Pose2D();
-    Pose2D(const Point2D &p, double orientation);
-    Pose2D(const Pose2D &p);
-    Pose2D(double x, double y, double orientation);
+    Transform2D();
+    Transform2D(const Point2D &p, double orientation);
+    Transform2D(const Transform2D &p);
+    Transform2D(double x, double y, double orientation);
     /**
      * set the pose
      * @param x
@@ -33,21 +33,21 @@ class Pose2D {
      * @param phi (orientation)
      * @return this reference
      **/
-    Pose2D &set(double x, const double y, double phi);
+    Transform2D &set(double x, const double y, double phi);
     /**
      * set the pose based on two points in world coordinates
      * @param position
      * @param point_ahead
      * @return this reference
      **/
-    Pose2D &set(const Point2D &position, const Point2D &point_ahead);
+    Transform2D &set(const Point2D &position, const Point2D &point_ahead);
 
     /**
      * set the pose
      * @param p pose
      * @return this reference
      **/
-    Pose2D &set(const Pose2D &p);
+    Transform2D &set(const Transform2D &p);
 
     /**
      * position
@@ -143,35 +143,35 @@ class Pose2D {
      * @param des pose in pose base space, a pose in the same frame as the  current pose
      * @return pose in target frame, a pose in the same frame as the  current pose
      **/
-    Pose2D transform_into_base(const Pose2D &src, Pose2D &des) const;
+    Transform2D transform_into_base(const Transform2D &src, Transform2D &des) const;
     /**
-     * transforms a Pose2D from pose target space into pose base space
+     * transforms a Transform2D from pose target space into pose base space
      * the orientation will be normalized between -PI and PI
      * @param src pose in pose target space, a pose seen from the current pose
      * @return pose in target frame, a pose in the same frame as the  current pose
      **/
-    Pose2D transform_into_base(const Pose2D &src) const;
+    Transform2D transform_into_base(const Transform2D &src) const;
 
     /**
-     * transforms a Pose2D from pose target space into pose base space
+     * transforms a Transform2D from pose target space into pose base space
      * the orientation will be normalized between -PI and PI
      * @param src pose in pose target space, a pose seen from the current pose
      * @return pose in target frame, a pose in the same frame as the  current pose
      **/
-    Pose2D operator*(const Pose2D &src) const;
+    Transform2D operator*(const Transform2D &src) const;
 
     /**
      * invert pose
      * @param des inverted pose
      * @return inverted pose
      **/
-    Pose2D &inverse(Pose2D &des) const;
+    Transform2D &inverse(Transform2D &des) const;
     
     /**
      * invert pose
      * @return inverted pose
      **/
-    Pose2D inverse() const;
+    Transform2D inverse() const;
 };
 } // namespace tf2
 #endif // TF2_GEOMETRY__POSE2D_HPP

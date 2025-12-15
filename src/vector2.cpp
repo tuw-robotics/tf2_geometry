@@ -82,7 +82,7 @@ const tf2Scalar &Vector2::operator[](int index) const {
 }
 
 tf2Scalar Vector2::angle() const {
-    return atan2(m_floats[1], m_floats[0]);
+    return tf2Atan2(m_floats[1], m_floats[0]);
 }
 
 tf2Scalar Vector2::length2() const {

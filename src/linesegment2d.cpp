@@ -61,7 +61,7 @@ LineSegment2D & LineSegment2D::set(const Point2D & p0, const Point2D & p1)
  * @return distance to line between the segment endpoints or the distance to the nearest endpoints **/
 tf2Scalar LineSegment2D::distance_to(const Point2D & p, tf2Scalar & dx, tf2Scalar & dy) const
 {
-  return tf2Sqrt(distanceSqrTo(p, dx, dy));
+  return tf2Sqrt(distance_to_sqrt(p, dx, dy));
 }
 /** computes squared distance to line segment
  * @see http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
@@ -69,7 +69,7 @@ tf2Scalar LineSegment2D::distance_to(const Point2D & p, tf2Scalar & dx, tf2Scala
  * @param dx vector to point x
  * @param dx vector to point y
  * @return distance to line between the segment endpoints or the distance to the nearest endpoints **/
-tf2Scalar LineSegment2D::distanceSqrTo(const Point2D & p, tf2Scalar & dx, tf2Scalar & dy) const
+tf2Scalar LineSegment2D::distance_to_sqrt(const Point2D & p, tf2Scalar & dx, tf2Scalar & dy) const
 {
   const tf2Scalar px = x1() - x0();
   const tf2Scalar py = y1() - y0();
@@ -87,7 +87,7 @@ tf2Scalar LineSegment2D::distanceSqrTo(const Point2D & p, tf2Scalar & dx, tf2Sca
   return dx * dx + dy * dy;
 }
 
-tf2Scalar LineSegment2D::closestPointLineSegmentRatio(const Point2D & p) const
+tf2Scalar LineSegment2D::closest_point_to_ratio(const Point2D & p) const
 {
   tf2Scalar px = x1() - x0();
   tf2Scalar py = y1() - y0();
@@ -100,11 +100,11 @@ tf2Scalar LineSegment2D::closestPointLineSegmentRatio(const Point2D & p) const
   }
   return u;
 }
-Point2D LineSegment2D::closestPointTo(const Point2D & p) const
+Point2D LineSegment2D::closest_point_to(const Point2D & p) const
 {
   tf2Scalar px = x1() - x0();
   tf2Scalar py = y1() - y0();
-  const tf2Scalar u = closestPointLineSegmentRatio(p);
+  const tf2Scalar u = closest_point_to_ratio(p);
   return Point2D(x0() + u * px, y0() + u * py);
 }
 

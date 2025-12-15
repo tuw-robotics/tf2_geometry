@@ -23,18 +23,49 @@ add_library(${PROJECT_NAME} SHARED
   src/transform2d.cpp
 )
 
+target_compile_features(${PROJECT_NAME} PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 target_include_directories(${PROJECT_NAME} PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
 
-target_compile_definitions(${PROJECT_NAME}
-  PRIVATE "CUSTOM_ACTION_CPP_BUILDING_DLL"
-)
+target_compile_definitions(${PROJECT_NAME} PRIVATE "TF2_GEOMETRY_BUILDING_LIBRARY")
 
 ament_target_dependencies(${PROJECT_NAME}
+  rclcpp
   tf2
 )
+
+install(DIRECTORY include
+  DESTINATION include
+)
+
+
+
+install(
+  TARGETS ${PROJECT_NAME}
+  EXPORT export_${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+ament_export_include_directories(
+  include
+)
+
+ament_export_libraries(
+  ${PROJECT_NAME}
+)
+
+ament_export_targets(
+  export_${PROJECT_NAME}
+)
+
+ament_export_dependencies(
+  tf2
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -70,36 +101,4 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-install(DIRECTORY include
-  DESTINATION include
-)
-
-install(TARGETS
-  ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-)
-
-install(TARGETS 
-  ${PROJECT_NAME} 
-  EXPORT 
-  export_${PROJECT_NAME}
-)
-
-ament_export_include_directories(
-  include
-)
-
-ament_export_libraries(
-  ${PROJECT_NAME}
-)
-
-ament_export_targets(
-  export_${PROJECT_NAME}
-)
-
-ament_export_dependencies(
-  tf2
-)
 ament_package()

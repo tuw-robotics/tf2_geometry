@@ -11,10 +11,24 @@ namespace tf2
 {
 
 
-double getYawFromEigenMatrix(const tf2::Matrix3x3& R) {
+template<typename TMatrix3x3>
+TF2SIMD_FORCE_INLINE tf2Scalar getYawFromRotationMatrix(const TMatrix3x3& R) {
     // Extract yaw from rotation matrix
-    double yaw = std::atan2(R[1][0], R[0][0]);
+    double yaw = tf2Atan2(R[1][0], R[0][0]);
     return yaw;
+}
+
+template<typename TMatrix3x3>
+TF2SIMD_FORCE_INLINE tf2Scalar getPitchFromRotationMatrix(const TMatrix3x3& R) {
+    // Extract pitch from rotation matrix
+    double pitch = tf2Atan2(-R[2][0], tf2Sqrt(R[2][1]*R[2][1] + R[2][2]*R[2][2]));
+    return pitch; 
+}
+template<typename TMatrix3x3>
+TF2SIMD_FORCE_INLINE tf2Scalar getRollFromRotationMatrix(const TMatrix3x3& R) {
+    // Extract roll from rotation matrix
+    double roll = tf2Atan2(R[2][1], R[2][2]);
+    return roll; 
 }
 
 /** converts a tf2::Transform into a tf2::Transform2D
@@ -24,7 +38,7 @@ double getYawFromEigenMatrix(const tf2::Matrix3x3& R) {
  **/
 TF2SIMD_FORCE_INLINE Transform2D &to_2D(Transform2D &des, const Transform &tf) {
     double roll, pitch, yaw;
-    tf.getBasis().getEulerYPR(roll, pitch, yaw);
+    tf.getBasis().getRPY(roll, pitch, yaw);
     des.set(tf.getOrigin().x(), tf.getOrigin().y() , yaw);
     return des;
 }

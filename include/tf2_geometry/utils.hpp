@@ -33,7 +33,7 @@ inline tf2Scalar angle_normalize(tf2Scalar angle, tf2Scalar min_angle = -M_PI, t
  **/
 inline tf2Scalar angle_difference(tf2Scalar alpha0, tf2Scalar angle1)
 {
-  return atan2(sin(alpha0 - angle1), cos(alpha0 - angle1));
+  return atan2(tf2Sin(alpha0 - angle1), tf2Cos(alpha0 - angle1));
 }
 
 /**
@@ -43,8 +43,8 @@ inline tf2Scalar angle_difference(tf2Scalar alpha0, tf2Scalar angle1)
 template<typename Quaternion>
 void EulerPitchToQuaternion(tf2Scalar pitch, Quaternion & q)
 {
-  tf2Scalar cp = cos(pitch * 0.5);
-  tf2Scalar sp = sin(pitch * 0.5);
+  tf2Scalar cp = tf2Cos(pitch * 0.5);
+  tf2Scalar sp = tf2Sin(pitch * 0.5);
 
   q.w = cp;
   q.x = 0;
@@ -59,8 +59,8 @@ void EulerPitchToQuaternion(tf2Scalar pitch, Quaternion & q)
 template<typename Quaternion>
 void EulerToQuaternion(tf2Scalar roll, const Quaternion & q)
 {
-  tf2Scalar cr = cos(roll * 0.5);
-  tf2Scalar sr = sin(roll * 0.5);
+  tf2Scalar cr = tf2Cos(roll * 0.5);
+  tf2Scalar sr = tf2Sin(roll * 0.5);
 
   q.w = cr;
   q.x = sr;
@@ -75,8 +75,8 @@ void EulerToQuaternion(tf2Scalar roll, const Quaternion & q)
 template<typename Quaternion>
 void EulerYawToQuaternion(tf2Scalar yaw, Quaternion & q)
 {
-  tf2Scalar cy = cos(yaw * 0.5);
-  tf2Scalar sy = sin(yaw * 0.5);
+  tf2Scalar cy = tf2Cos(yaw * 0.5);
+  tf2Scalar sy = tf2Sin(yaw * 0.5);
 
   q.w = cy;
   q.x = 0.;
@@ -91,12 +91,12 @@ void EulerYawToQuaternion(tf2Scalar yaw, Quaternion & q)
 template<typename Quaternion>
 void EulerToQuaternion(tf2Scalar pitch, tf2Scalar roll, tf2Scalar yaw, Quaternion & q)
 {
-  tf2Scalar cy = cos(yaw * 0.5);
-  tf2Scalar sy = sin(yaw * 0.5);
-  tf2Scalar cr = cos(roll * 0.5);
-  tf2Scalar sr = sin(roll * 0.5);
-  tf2Scalar cp = cos(pitch * 0.5);
-  tf2Scalar sp = sin(pitch * 0.5);
+  tf2Scalar cy = tf2Cos(yaw * 0.5);
+  tf2Scalar sy = tf2Sin(yaw * 0.5);
+  tf2Scalar cr = tf2Cos(roll * 0.5);
+  tf2Scalar sr = tf2Sin(roll * 0.5);
+  tf2Scalar cp = tf2Cos(pitch * 0.5);
+  tf2Scalar sp = tf2Sin(pitch * 0.5);
 
   q.w = cy * cr * cp + sy * sr * sp;
   q.x = cy * sr * cp - sy * cr * sp;
@@ -118,7 +118,7 @@ tf2Scalar & QuaternionToRoll(const Quaternion & q, tf2Scalar & roll)
   // roll (x-axis rotation)
   tf2Scalar sinr = +2.0 * (q.w * q.x + q.y * q.z);
   tf2Scalar cosr = +1.0 - 2.0 * (q.x * q.x + q.y * q.y);
-  roll = atan2(sinr, cosr);
+  roll = tf2Atan2(sinr, cosr);
   return roll;
 }
 /**
@@ -146,9 +146,9 @@ tf2Scalar & QuaternionToPitch(const Quaternion & q, tf2Scalar & pitch)
   // pitch (y-axis rotation)
   tf2Scalar sinp = +2.0 * (q.w * q.y - q.z * q.x);
   if (fabs(sinp) >= 1) {
-    pitch = copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
+    pitch =  copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
   } else {
-    pitch = asin(sinp);
+    pitch = tf2Asin(sinp);
   }
   return pitch;
 }
@@ -178,7 +178,7 @@ tf2Scalar & QuaternionToYaw(const Quaternion & q, tf2Scalar & yaw)
   // yaw (z-axis rotation)
   tf2Scalar siny = +2.0 * (q.w * q.z + q.x * q.y);
   tf2Scalar cosy = +1.0 - 2.0 * (q.y * q.y + q.z * q.z);
-  yaw = atan2(siny, cosy);
+  yaw = tf2Atan2(siny, cosy);
   return yaw;
 }
 /**

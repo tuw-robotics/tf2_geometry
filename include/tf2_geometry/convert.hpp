@@ -32,45 +32,43 @@ TF2SIMD_FORCE_INLINE tf2Scalar getRollFromRotationMatrix(const TMatrix3x3& R) {
 }
 
 /** converts a tf2::Transform into a tf2::Transform2D
- * @param des transform2d
- * @param tf tf2::Transform
+ * @param src tf2::Transform
+ * @param des tf2::Transform2D
  * @return reference to des
  **/
-TF2SIMD_FORCE_INLINE Transform2D &to_2D(Transform2D &des, const Transform &tf) {
+TF2SIMD_FORCE_INLINE Transform2D &to_2D(const Transform &src, Transform2D &des) {
     double roll, pitch, yaw;
-    tf.getBasis().getRPY(roll, pitch, yaw);
-    des.set(tf.getOrigin().x(), tf.getOrigin().y() , yaw);
+    src.getBasis().getRPY(roll, pitch, yaw);
+    des.set(src.getOrigin().x(), src.getOrigin().y() , yaw);
     return des;
 }
 
 /** converts a tf2::Transform into a tf2::Transform2D
- * @param des transform2d
- * @param tf tf2::Transform
- * @return reference to des
+ * @param src tf2::Transform
+ * @return tf2::Transform2D object
  **/
-TF2SIMD_FORCE_INLINE Transform2D to_Transform2D(const Transform &tf) {
+TF2SIMD_FORCE_INLINE Transform2D to_Transform2D(const Transform &src) {
     Transform2D des;
-    return to_2D(des, tf);
+    return to_2D(src, des);
 }
 
 /** converts a tf2::Transform into a tf2::Transform2D
- * @param des transform2d
- * @param tf tf2::Transform
+ * @param src tf2::Transform
+ * @param des tf2::Point2D
  * @return reference to des
  **/
-TF2SIMD_FORCE_INLINE Point2D &to_2D(Point2D &des, const Transform &tf) {
-    des.set(tf.getOrigin().x(), tf.getOrigin().y());
+TF2SIMD_FORCE_INLINE Point2D &to_2D(const Transform &src, Point2D &des) {
+    des.set(src.getOrigin().x(), src.getOrigin().y());
     return des;
 }
 
 /** converts a tf2::Transform into a tf2::Transform2D
- * @param des transform2d
- * @param tf tf2::Transform
- * @return reference to des
+ * @param src tf2::Transform
+ * @return tf2::Point2D object
  **/
-TF2SIMD_FORCE_INLINE Point2D to_Point2D(const Transform &tf) {
+TF2SIMD_FORCE_INLINE Point2D to_Point2D(const Transform &src) {
     Point2D des;
-    return to_2D(des, tf);
+    return to_2D(src, des);
 }
 
 }  // namespace tf2

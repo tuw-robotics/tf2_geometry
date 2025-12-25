@@ -1,6 +1,8 @@
 # tf2_geometry
 2D geometry for tf2
 
+![image](res/tf2_geometry_capabilities.png)
+
 ## Transform2D
 The Transform2D is a class which can be used to describe poses and transformations in 2D space. It can be generated from a classical tf2::Transform object using the functions:
 * `tf2::Transform2D &tf2::to_2D(const Transform &src, tf2::Transform2D &des)` or

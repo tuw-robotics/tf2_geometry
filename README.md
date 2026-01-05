@@ -1,5 +1,5 @@
 # tf2_geometry
-2D geometry for tf2
+The tf2_geometry package is an add-on for the [geometry2](https://github.com/ros2/geometry2) library, used in ROS 2 to represent 3D coordinate transformations. It can simplify 3D inputs into 2D objects. By providing types such as Point2D, Line2D, and LineSegment2D, it enables various classical graphical operations that are especially useful for wheel-driven vehicles operating in 2D environments.
 
 ![image](res/tf2_geometry_capabilities.png)
 
